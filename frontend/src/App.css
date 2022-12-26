@@ -8,3 +8,14 @@
 .App-link {
   color: #61dafb;
 }
+
+.footer-container {
+  display: flex;
+  justify-content: center;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  margin-bottom: 30px;
+}
