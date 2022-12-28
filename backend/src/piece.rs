@@ -59,7 +59,6 @@ pub struct PieceExport {
     pub lines: [Line; 3],
     // Filled when resolved
     pub borders: [Option<u32>; 6],
-    pub passed: bool,
 }
 
 impl From<Piece> for PieceExport {
@@ -76,68 +75,16 @@ impl From<Piece> for PieceExport {
                 value.borders[4].as_ref().map(|p| p.read().unwrap().id),
                 value.borders[5].as_ref().map(|p| p.read().unwrap().id),
             ],
-            passed: value.passed,
         }
     }
 }
 
-
-// mod arc_rwlock_serde {
-//     use serde::{Deserialize, Serialize};
-//     use serde::de::{Deserializer, Visitor, SeqAccess};
-//     use serde::ser::{Serializer, SerializeSeq};
-//     use core::fmt;
-//     use std::sync::{Arc, RwLock};
-
-//     use super::Piece;
-
-//     pub fn serialize<S>(val: &[Option<Arc<RwLock<Piece>>>; 6], s: S) -> Result<S::Ok, S::Error>
-//         where S: Serializer,
-//     {
-//         let mut rows = s.serialize_seq(Some (6))?;
-//         for elem in val {
-//             if let Some(e) = elem {
-//                 rows.serialize_element(&e.read().unwrap().id)?;
-//             } else {
-//                 rows.serialize_element(&None::<Piece>)?;
-//             }
-//         }
-//         rows.end()
-//     }
-
-//     struct BordersDeserializer;
-
-//     impl<'de> Visitor<'de> for BordersDeserializer {
-//         type Value = [Option<Arc<RwLock<Piece>>>; 6];
-
-//         fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-//             formatter.write_str("Borders sequence.")
-//         }
-
-//         fn visit_seq<A>(self, mut seq: A) -> Result<Self::Value, A::Error>
-//         where
-//             A: SeqAccess<'de>,
-//         {
-//             let mut pieces: [Option<Arc<RwLock<Piece>>>; 6] = Default::default();
-//             let mut i = 0;
-//             while i < 6 {
-//                 if let Some(piece) = seq.next_element()? {
-//                     pieces[i] = Some(Arc::new(RwLock::new(piece)));
-//                 } else {
-//                     pieces[i] = None;
-//                 }
-//                 i += 1;
-//             }
-//             Ok(pieces)
-//         }
-//     }
-
-//     pub fn deserialize<'de, D>(d: D) -> Result<[Option<Arc<RwLock<Piece>>>; 6], D::Error>
-//         where D: Deserializer<'de>,
-//     {
-//         d.deserialize_seq(BordersDeserializer)
-//     }
-// }
+impl From<PieceExport> for Piece {
+    /// Becareful doesn't fill borders
+    fn from(value: PieceExport) -> Self {
+        Piece { id: value.id, color: value.color, lines: value.lines, borders: [None, None, None, None, None, None], passed: false }
+    }
+}
 
 impl fmt::Display for Piece {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {

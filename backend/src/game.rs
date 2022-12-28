@@ -48,8 +48,17 @@ pub fn check_solved_game(pieces: &[Arc<RwLock<Piece>>], color: Color) -> bool {
         return false;
     }
     let start_piece = &pieces[0];
-    check_solved(start_piece, color, LinePoints::END)
-    // Add check all pieces used
+    if check_solved(start_piece, color, LinePoints::END) {
+        for piece in pieces {
+            if !piece.read().unwrap().passed {
+                return false;
+            }
+        }
+        true
+    } else {
+        false
+    }
+
 }
 
 #[cfg(test)]

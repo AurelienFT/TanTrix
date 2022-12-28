@@ -1,4 +1,5 @@
 use std::{sync::{Arc, RwLock}, str::FromStr};
+use api::handle_get_daily_game;
 use tiny_http::{Server, Response, Header, Method};
 
 use crate::{
@@ -18,6 +19,7 @@ fn main() {
         let response_str = if request.method() == &Method::Post {
             match request.url() {
                 "/submit" => handle_submit(&mut request),
+                "/getDailyGame" => handle_get_daily_game(&mut request),
                 _ => handle_unknown(&mut request),
             }
         } else {
