@@ -10,6 +10,16 @@ pub enum Color {
     BLUE,
 }
 
+impl ToString for Color {
+    fn to_string(&self) -> String {
+        match self {
+            Color::YELLOW => String::from("yellow"),
+            Color::RED => String::from("red"),
+            Color::BLUE => String::from("blue"),
+        }
+    }
+}
+
 #[derive(Copy, Clone)]
 pub enum LinePoints {
     START,
@@ -52,7 +62,7 @@ pub struct Piece {
     pub passed: bool,
 }
 
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct PieceExport {
     pub id: u32,
     pub color: Color,

@@ -10,6 +10,7 @@ use crate::{
 
 mod api;
 mod game;
+mod generation;
 mod piece;
 
 fn main() {
@@ -19,7 +20,8 @@ fn main() {
         let response_str = if request.method() == &Method::Post {
             match request.url() {
                 "/submit" => handle_submit(&mut request),
-                "/getDailyGame" => handle_get_daily_game(&mut request),
+                //TODO: Fix use the full structure
+                "/getDailyGame" => handle_get_daily_game(&mut request).0,
                 _ => handle_unknown(&mut request),
             }
         } else {
