@@ -1,5 +1,13 @@
-use crate::piece::{Color, Line, LinePoints, Piece};
+use serde::{Deserialize, Serialize};
+
+use crate::piece::{Color, Line, LinePoints, Piece, PieceExport};
 use std::sync::{Arc, RwLock};
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct GameExport {
+    pub pieces: Vec<PieceExport>,
+    pub color: Color,
+}
 
 fn get_color_line<'a>(piece: &'a Piece, color: &'a Color) -> Option<&'a Line> {
     piece.lines.iter().find(|line| line.color == *color)
@@ -58,7 +66,6 @@ pub fn check_solved_game(pieces: &[Arc<RwLock<Piece>>], color: Color) -> bool {
     } else {
         false
     }
-
 }
 
 #[cfg(test)]

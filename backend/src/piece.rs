@@ -1,7 +1,7 @@
 use std::fmt;
 use std::sync::{Arc, RwLock};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(PartialEq, Eq, Debug, Clone, Copy, Serialize, Deserialize)]
 pub enum Color {
@@ -92,7 +92,13 @@ impl From<Piece> for PieceExport {
 impl From<PieceExport> for Piece {
     /// Becareful doesn't fill borders
     fn from(value: PieceExport) -> Self {
-        Piece { id: value.id, color: value.color, lines: value.lines, borders: [None, None, None, None, None, None], passed: false }
+        Piece {
+            id: value.id,
+            color: value.color,
+            lines: value.lines,
+            borders: [None, None, None, None, None, None],
+            passed: false,
+        }
     }
 }
 
@@ -179,7 +185,10 @@ impl Piece {
 mod tests {
     use std::sync::{Arc, RwLock};
 
-    use crate::{piece::{Piece, Color, Line, PieceExport}, game::check_solved_game};
+    use crate::{
+        game::check_solved_game,
+        piece::{Color, Line, Piece, PieceExport},
+    };
 
     #[test]
     fn test_serialize_json() {
@@ -212,25 +221,28 @@ mod tests {
                 ],
             ))),
         ];
-    
+
         pieces[1].write().unwrap().rotate_left();
         pieces[2].write().unwrap().rotate_right();
         pieces[2].write().unwrap().rotate_right();
-    
+
         // Link 0-1
         pieces[0].write().unwrap().add_border(pieces[1].clone(), 2);
         pieces[1].write().unwrap().add_border(pieces[0].clone(), 5);
-    
+
         // Link 1-2
         pieces[1].write().unwrap().add_border(pieces[2].clone(), 4);
         pieces[2].write().unwrap().add_border(pieces[1].clone(), 1);
-    
+
         // Link 2-0
         pieces[0].write().unwrap().add_border(pieces[2].clone(), 3);
         pieces[2].write().unwrap().add_border(pieces[0].clone(), 0);
         //assert!(check_solved_game(&pieces, Color::YELLOW));
 
-        let pieces_export: Vec<PieceExport> = pieces.iter().map(|p| PieceExport::from(p.read().unwrap().clone())).collect();
+        let pieces_export: Vec<PieceExport> = pieces
+            .iter()
+            .map(|p| PieceExport::from(p.read().unwrap().clone()))
+            .collect();
 
         let json = serde_json::to_string_pretty(&pieces_export).unwrap();
         println!("{}", json);

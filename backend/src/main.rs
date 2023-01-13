@@ -1,11 +1,14 @@
-use std::{sync::{Arc, RwLock}, str::FromStr};
 use api::handle_get_daily_game;
-use tiny_http::{Server, Response, Header, Method};
+use std::{
+    str::FromStr,
+    sync::{Arc, RwLock},
+};
+use tiny_http::{Header, Method, Response, Server};
 
 use crate::{
+    api::{handle_submit, handle_unknown},
     game::check_solved_game,
     piece::{Color, Line, Piece},
-    api::{handle_submit, handle_unknown},
 };
 
 mod api;
@@ -21,7 +24,7 @@ fn main() {
             match request.url() {
                 "/submit" => handle_submit(&mut request),
                 //TODO: Fix use the full structure
-                "/getDailyGame" => handle_get_daily_game(&mut request).0,
+                "/getDailyGame" => handle_get_daily_game(&mut request),
                 _ => handle_unknown(&mut request),
             }
         } else {
